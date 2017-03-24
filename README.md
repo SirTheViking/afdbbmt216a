@@ -1,6 +1,7 @@
-# Juliet#1800
+# ![alt text](http://i.imgur.com/qppHAjG.png) Juliet#1800
 
 This is the first bot I will take seriously while working on it
+[Invite the bot to your discord server](https://discordapp.com/oauth2/authorize?client_id=292978791113031690&scope=bot&permissions=90)
 
 ## Implemented features so far:
 * Ping Command
