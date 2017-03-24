@@ -98,6 +98,16 @@ public class MusicPlayer extends Command {
             TrackScheduler trackScheduler = Main.schedulers.get(servername);
             trackScheduler.nextTrack();
         }
+        else if(setAliases(Main.prefixes.get(servername), "pause").contains(message[0])) {
+            TrackScheduler trackScheduler = Main.schedulers.get(servername);
+            trackScheduler.getPlayer().setPaused(true);
+            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Player paused.").queue();
+        }
+        else if(setAliases(Main.prefixes.get(servername), "play").contains(message[0])) {
+            TrackScheduler trackScheduler = Main.schedulers.get(servername);
+            trackScheduler.getPlayer().setPaused(false);
+            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Player running.").queue();
+        }
         /*
             For leaving the voice channel for the specified server
          */
