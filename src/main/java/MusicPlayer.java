@@ -55,10 +55,21 @@ public class MusicPlayer extends Command {
             AudioManager manager = guild.getAudioManager();
             AudioPlayer player = Main.playerManager.createPlayer();
             TrackScheduler trackScheduler = new TrackScheduler(player);
+
+            Main.schedulers.put(servername, trackScheduler);
+
             player.addListener(trackScheduler);
 
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
             manager.openAudioConnection(channel);
+        }
+        else if(setAliases(Main.prefixes.get(servername), "q").contains(message[0])) {
+            TrackScheduler trackScheduler = Main.schedulers.get(servername);
+
+            if(trackScheduler == null) {
+                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " I need to be in a voice channel first.").queue();
+                return;
+            }
 
             Main.playerManager.loadItem("https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi", new AudioLoadResultHandler() {
                 @Override
@@ -81,6 +92,11 @@ public class MusicPlayer extends Command {
                     System.out.println("LOAD FAILED");
                 }
             });
+
+        }
+        else if(setAliases(Main.prefixes.get(servername), "next").contains(message[0])) {
+            TrackScheduler trackScheduler = Main.schedulers.get(servername);
+            trackScheduler.nextTrack();
         }
         /*
             For leaving the voice channel for the specified server
@@ -90,8 +106,6 @@ public class MusicPlayer extends Command {
 
             AudioManager manager = guild.getAudioManager();
             manager.closeAudioConnection();
-
-
         }
 
 
