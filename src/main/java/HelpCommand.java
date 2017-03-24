@@ -42,7 +42,6 @@ public class HelpCommand extends Command {
 
         if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
             Thread messageThread = new Thread(() -> {
-                Database.incrementCommand("help");
                 MessageChannel channel = e.getChannel();
                 EmbedBuilder eb = helpEmbed(e);
                 channel.sendMessage(eb.build()).queue();

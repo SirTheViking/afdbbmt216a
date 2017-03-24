@@ -47,7 +47,6 @@ public class RollCommand extends Command {
 
         String[] message = e.getMessage().getContent().split(" ");
         if(setAliases(Main.prefixes.get(servername), "roll", "dice").contains(message[0])) {
-            Database.incrementCommand("roll");
             /*
                 Everything in here runs if the message properly contains
                 the prefix + roll or dice as the first word of the sentence

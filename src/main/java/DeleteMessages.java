@@ -37,7 +37,6 @@ public class DeleteMessages extends Command {
 
         String[] messages = e.getMessage().getContent().split(" ");
         if(setAliases(Main.prefixes.get(servername), "rm", "delete").contains(messages[0])) {
-            Database.incrementCommand("deleteMessages");
             Thread deleteThread = new Thread(() -> {
 
                 int toDelete = 10;
@@ -82,7 +81,6 @@ public class DeleteMessages extends Command {
 
         }
         else if(setAliases(Main.prefixes.get(servername), "nuke").contains(messages[0])) {
-            Database.incrementCommand("nuke");
 
             Thread deleteThread = new Thread(() -> {
                 int toDelete = 100;
