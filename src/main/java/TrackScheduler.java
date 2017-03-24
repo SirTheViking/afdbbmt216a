@@ -22,6 +22,10 @@ public class TrackScheduler extends AudioEventAdapter {
         this.queue = new LinkedBlockingQueue<>();
     }
 
+    public AudioPlayer getPlayer() {
+        return player;
+    }
+
     /**
      * Add the next track to queue or play right away if nothing is in the queue.
      *
