@@ -14,3 +14,4 @@ This is the first bot I will take seriously while working on it
 * Properly implement and polish the music player
 * Update help menu
 * Get better internet...
+* Remove different prefixes for different servers
