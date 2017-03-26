@@ -25,11 +25,6 @@ public class HelpCommand extends Command {
         if(e.isFromType(ChannelType.TEXT)) {
             String message = e.getMessage().getContent();
 
-            String servername = e.getGuild().getName();
-            if(!Database.checkForServer(servername)) {
-                Main.prefixes.put(servername, ">");
-                Database.writeToPrefixes(servername);
-            }
 
         /*
             As every command class will eventually contain this
@@ -37,6 +32,12 @@ public class HelpCommand extends Command {
             the server that the message is being sent from. If not
             then it adds it. Written on 20/03/2017
          */
+            String servername = e.getGuild().getName();
+            if(!Database.checkForServer(servername)) {
+                Main.prefixes.put(servername, ">");
+                Database.writeToPrefixes(servername);
+            }
+
 
             if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
                 Thread messageThread = new Thread(() -> {
