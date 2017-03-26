@@ -22,12 +22,14 @@ public class HelpCommand extends Command {
      * @param e The library event containing all of the message information
      */
     private void respondToMessage(MessageReceivedEvent e) {
-        String message = e.getMessage().getContent();
-
-        String servername = "PRIVATE"; //This is temporary
         if(e.isFromType(ChannelType.TEXT)) {
-            servername = e.getGuild().getName();
-        }
+            String message = e.getMessage().getContent();
+
+            String servername = e.getGuild().getName();
+            if(!Database.checkForServer(servername)) {
+                Main.prefixes.put(servername, ">");
+                Database.writeToPrefixes(servername);
+            }
 
         /*
             As every command class will eventually contain this
@@ -35,18 +37,15 @@ public class HelpCommand extends Command {
             the server that the message is being sent from. If not
             then it adds it. Written on 20/03/2017
          */
-        if(!Database.checkForServer(servername) && (!servername.equals("PRIVATE"))) {
-            Main.prefixes.put(servername, ">");
-            Database.writeToPrefixes(servername);
-        }
 
-        if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
-            Thread messageThread = new Thread(() -> {
-                MessageChannel channel = e.getChannel();
-                EmbedBuilder eb = helpEmbed(e);
-                channel.sendMessage(eb.build()).queue();
-            });
-            messageThread.start();
+            if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
+                Thread messageThread = new Thread(() -> {
+                    MessageChannel channel = e.getChannel();
+                    EmbedBuilder eb = helpEmbed(e);
+                    channel.sendMessage(eb.build()).queue();
+                });
+                messageThread.start();
+            }
         }
     }
 
@@ -65,10 +64,19 @@ public class HelpCommand extends Command {
 
         eb.setAuthor(jda.getSelfUser().getName(), "https://www.artstation.com/", jda.getSelfUser().getAvatarUrl());
         eb.addBlankField(true);
-        eb.addField("Commands: ", ">roll : rolls a number between 1 and x (x = 10 by default)" +
-            "\n\nadding a dash '-' to a message will make the bot respond to it" +
-            "\n\n>help : will bring up this menu" +
-            "\n\neastereggs exist, see if you can find them", false);
+        eb.addField("Commands: ", ">roll   :   rolls a number between 1 and x (x = 10 by default)" +
+                        "\n\n>help   :   will bring up this menu" +
+                        "\n\nadding a dash '-' to a message will make the bot respond to it", false);
+        eb.addBlankField(true);
+        eb.addField("Music Commands: ",
+                "\n\n>join <channel name>   :   to make the bot join a voice channel" +
+                        "\n\n>q <song/playlist>   :   if no song or playlist is provided a random one will be played" +
+                        "\n\n>next   :   Move to the next song in the playlist" +
+                        "\n\n>pause   :   pause the music" +
+                        "\n\n>play   :   resume the music" +
+                        "\n\n>np   :   show the name of the song that's playing" +
+                        "\n\n>leave   :   leave the voice channel", false);
+
         eb.addBlankField(false);
         eb.addField("", "Mem usage: " + (usedMemory/1000000) + "MB", true);
         eb.addField("", "Ping: " + (jda.getPing()) + "ms", false);
