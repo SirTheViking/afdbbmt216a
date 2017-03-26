@@ -10,17 +10,16 @@ This is written using the JDA library
 * Message deletion/nuke
 * Ability to get Twitch stream links
 * A partial music player...
-* Google search //NOT DONE YET
+* Google search //NOT 100% DONE YET
 
 ## Things TODO:
 * Properly implement and polish the music command
-  * Play command
-  * Pause command
-  * Queue command
-  * Next command
-  * Playlist picker
-  * Personal songs
-  * Personal playlists
-* Update help menu
+  * ~~Play command~~
+  * ~~Pause command~~
+  * ~~Queue command~~
+  * ~~Next command~~
+  * Playlist picker for server playlists
+  * Server songs
+  * Server playlists
+* ~~Update help menu~~
 * Get better internet...
-* Remove different prefixes for different servers
