@@ -3,9 +3,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
@@ -25,97 +23,142 @@ public class MusicPlayer extends Command {
             no modifications are made to the message content.
             Written on 22/03/2017
          */
-        String servername = e.getGuild().getName();
-        if(!Database.checkForServer(servername) && (!servername.equals("PRIVATE"))) {
-            Main.prefixes.put(servername, ">");
-            Database.writeToPrefixes(servername);
-        }
 
-        String[] message = e.getMessage().getContent().split(" ");
-        if(setAliases(Main.prefixes.get(servername), "join").contains(message[0])) {
-            Guild guild = e.getGuild();
+        if(e.isFromType(ChannelType.TEXT)) {
+
+            MessageChannel channel = e.getChannel();
             User author = e.getAuthor();
-            String channelName;
+
+            String servername = e.getGuild().getName();
+            if(!Database.checkForServer(servername)) {
+                Main.prefixes.put(servername, ">");
+                Database.writeToPrefixes(servername);
+            }
+
+            String[] message = e.getMessage().getContent().split(" ");
+            if(setAliases(Main.prefixes.get(servername), "join").contains(message[0])) {
+                Guild guild = e.getGuild();
+                String channelName;
             /*
                 This will be the first voice channel
                 with the name, not case sensitive
             */
-            if (message.length > 1) {
-                channelName = message[1];
-            } else {
-                e.getChannel().sendMessage(author.getAsMention() + " Please specify a channel to join.").queue();
-                return;
-            }
+                if (message.length > 1) {
+                    channelName = message[1];
+                } else {
+                    channel.sendMessage(author.getAsMention() + " Please specify a channel to join.").queue();
+                    return;
+                }
             /*
                 Might wanna check if the channel exists
                 and send out a message if it doesn't
                 Written on 22/03/2017
              */
-            VoiceChannel channel = guild.getVoiceChannelsByName(channelName, true).get(0);
-            AudioManager manager = guild.getAudioManager();
-            AudioPlayer player = Main.playerManager.createPlayer();
-            TrackScheduler trackScheduler = new TrackScheduler(player);
+                VoiceChannel vchannel = guild.getVoiceChannelsByName(channelName, true).get(0);
+                AudioManager manager = guild.getAudioManager();
+                AudioPlayer player = Main.playerManager.createPlayer();
+                TrackScheduler trackScheduler = new TrackScheduler(player);
 
-            Main.schedulers.put(servername, trackScheduler);
+                Main.schedulers.put(servername, trackScheduler);
 
-            player.addListener(trackScheduler);
+                player.addListener(trackScheduler);
 
-            manager.setSendingHandler(new AudioPlayerSendHandler(player));
-            manager.openAudioConnection(channel);
-        }
-        else if(setAliases(Main.prefixes.get(servername), "q").contains(message[0])) {
-            TrackScheduler trackScheduler = Main.schedulers.get(servername);
-
-            if(trackScheduler == null) {
-                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " I need to be in a voice channel first.").queue();
-                return;
+                manager.setSendingHandler(new AudioPlayerSendHandler(player));
+                manager.openAudioConnection(vchannel);
             }
 
-            Main.playerManager.loadItem("https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi", new AudioLoadResultHandler() {
-                @Override
-                public void trackLoaded(AudioTrack audioTrack) {
-                    trackScheduler.queue(audioTrack);
+            /*
+                Queues a song from a link, or a playlist
+                Maybe you can mix SoundCloud and YouTube idk YET.
+                Written on 26/03/2017
+             */
+            else if(setAliases(Main.prefixes.get(servername), "q").contains(message[0])) {
+                TrackScheduler trackScheduler = Main.schedulers.get(servername);
+                String song = "https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi";
+
+                if(message.length == 2) {
+                    song = message[1];
                 }
 
-                @Override
-                public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                    audioPlaylist.getTracks().forEach(trackScheduler::queue);
+                if(trackScheduler == null) {
+                    channel.sendMessage(author.getAsMention() + " I need to be in a voice channel first.").queue();
+                    return;
                 }
 
-                @Override
-                public void noMatches() {
-                    System.out.println("NO MATCHES");
-                }
+                Main.playerManager.loadItem(song, new AudioLoadResultHandler() {
+                    @Override
+                    public void trackLoaded(AudioTrack audioTrack) {
+                        trackScheduler.queue(audioTrack);
+                    }
 
-                @Override
-                public void loadFailed(FriendlyException e) {
-                    System.out.println("LOAD FAILED");
-                }
-            });
+                    @Override
+                    public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                        audioPlaylist.getTracks().forEach(trackScheduler::queue);
+                    }
+                    @Override
+                    public void noMatches() {
+                        e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Make sure the playlist/song isn't private.").queue();
+                    }
 
-        }
-        else if(setAliases(Main.prefixes.get(servername), "next").contains(message[0])) {
-            TrackScheduler trackScheduler = Main.schedulers.get(servername);
-            trackScheduler.nextTrack();
-        }
-        else if(setAliases(Main.prefixes.get(servername), "pause").contains(message[0])) {
-            TrackScheduler trackScheduler = Main.schedulers.get(servername);
-            trackScheduler.getPlayer().setPaused(true);
-            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Player paused.").queue();
-        }
-        else if(setAliases(Main.prefixes.get(servername), "play").contains(message[0])) {
-            TrackScheduler trackScheduler = Main.schedulers.get(servername);
-            trackScheduler.getPlayer().setPaused(false);
-            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Player running.").queue();
-        }
-        /*
-            For leaving the voice channel for the specified server
-         */
-        else if(setAliases(Main.prefixes.get(servername), "leave").contains(message[0])) {
-            Guild guild = e.getGuild();
+                    @Override
+                    public void loadFailed(FriendlyException ex) {
+                        e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Something happened and I couldn't load what you provided").queue();
+                    }
+                });
 
-            AudioManager manager = guild.getAudioManager();
-            manager.closeAudioConnection();
+            }
+
+            /*
+                Move forward into the playlist and
+                play the next song
+                Written on 26/03/2017
+             */
+            else if(setAliases(Main.prefixes.get(servername), "next").contains(message[0])) {
+                TrackScheduler trackScheduler = Main.schedulers.get(servername);
+                trackScheduler.nextTrack();
+            }
+
+            /*
+                Pause the player.
+                Written on 26/03/2017
+             */
+            else if(setAliases(Main.prefixes.get(servername), "pause").contains(message[0])) {
+                TrackScheduler trackScheduler = Main.schedulers.get(servername);
+                trackScheduler.getPlayer().setPaused(true);
+                channel.sendMessage(author.getAsMention() + " Player paused.").queue();
+            }
+
+            /*
+                Resume the player.
+                Written on 26/03/2017
+             */
+            else if(setAliases(Main.prefixes.get(servername), "play").contains(message[0])) {
+                TrackScheduler trackScheduler = Main.schedulers.get(servername);
+                trackScheduler.getPlayer().setPaused(false);
+                channel.sendMessage(author.getAsMention() + " Player running.").queue();
+            }
+
+            /*
+                Get the song that's playing.
+                Written on 26/03/2017
+             */
+            else if(setAliases(Main.prefixes.get(servername), "np").contains(message[0])) {
+                TrackScheduler trackScheduler = Main.schedulers.get(servername);
+                String playing = trackScheduler.getPlayer().getPlayingTrack().getInfo().title;
+                channel.sendMessage(author.getAsMention() + " " + playing).queue();
+            }
+
+            /*
+                Leave the channel that the bot is currently in.
+                Written on 26/03/2017
+             */
+            else if(setAliases(Main.prefixes.get(servername), "leave").contains(message[0])) {
+                Guild guild = e.getGuild();
+
+                AudioManager manager = guild.getAudioManager();
+                manager.closeAudioConnection();
+            }
+
         }
 
 
