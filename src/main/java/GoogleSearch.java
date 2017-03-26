@@ -1,4 +1,6 @@
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -19,9 +21,16 @@ public class GoogleSearch extends Command {
         String[] message = e.getMessage().getContent().split(" ", 2);
 
         if(message[0].equals(">g") && e.isFromType(ChannelType.TEXT)) {
+            MessageChannel channel = e.getChannel();
+            User author = e.getAuthor();
+            // If a link was provided
             if(message.length == 2) {
                 final String encodedQuery = encodeString(message[1]);
-
+                /*
+                    Get the first page of the returned
+                    google search results and retrieve all
+                    links from it. Written on 26/03/2017
+                 */
                 try {
                     long start = System.currentTimeMillis();
                     final Elements els = Jsoup.connect(GOOGLE_URL + encodedQuery)
@@ -30,12 +39,19 @@ public class GoogleSearch extends Command {
                             .select("h3.r a");
                     long end = System.currentTimeMillis();
                     long fTime = end - start;
+                    /*
+                        This only gets the first result.
+                        The user should be able to choose how many
+                        results they want. min/default = 1, max = 10.
+                        Written on 26/03/2017
+                     */
                     Element el = els.get(0);
-
-                    e.getChannel().sendMessage(el.attr("href") + " `" + fTime + "ms`").queue();
+                    channel.sendMessage(el.attr("href") + " `" + fTime + "ms`").queue();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+            } else {
+                channel.sendMessage(author.getAsMention() + " You need to give me some words to search after.").queue();
             }
         } else if (message[0].equals(">g") && e.isFromType(ChannelType.PRIVATE)){
             e.getChannel().sendMessage("That command doesn't work here YET").queue();
