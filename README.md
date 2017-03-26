@@ -1,7 +1,7 @@
 # Juliet#1800
 
-This is the first bot I will take seriously while working on it
-### [Invite the bot to your discord server](https://discordapp.com/oauth2/authorize?client_id=292978791113031690&scope=bot&permissions=90)
+This is written using the JDA library
+#### [Invite the bot to your discord server](https://discordapp.com/oauth2/authorize?client_id=292978791113031690&scope=bot&permissions=90)
 
 ## Implemented features so far:
 * Ping Command
@@ -10,8 +10,9 @@ This is the first bot I will take seriously while working on it
 * Message deletion/nuke
 * Ability to get Twitch stream links
 * A partial music player...
+* Google search //NOT DONE YET
 
-## Things TODO
+## Things TODO:
 * Properly implement and polish the music command
   * Play command
   * Pause command
