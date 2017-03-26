@@ -25,7 +25,6 @@ public class HelpCommand extends Command {
         if(e.isFromType(ChannelType.TEXT)) {
             String message = e.getMessage().getContent();
 
-
         /*
             As every command class will eventually contain this
             It checks whether or not the HashMap already contains
@@ -38,6 +37,14 @@ public class HelpCommand extends Command {
                 Database.writeToPrefixes(servername);
             }
 
+            if(message.equals(">getUsage")) {
+                Thread usageThread = new Thread(() -> {
+                    MessageChannel channel = e.getChannel();
+                    EmbedBuilder eb = usageEmbed(e);
+                    channel.sendMessage(eb.build()).queue();
+                });
+                usageThread.start();
+            }
 
             if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
                 Thread messageThread = new Thread(() -> {
@@ -61,7 +68,6 @@ public class HelpCommand extends Command {
     private EmbedBuilder helpEmbed(MessageReceivedEvent e) {
         EmbedBuilder eb = new EmbedBuilder();
         JDA jda = e.getJDA();
-        long usedMemory  = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         eb.setAuthor(jda.getSelfUser().getName(), "https://www.artstation.com/", jda.getSelfUser().getAvatarUrl());
         eb.addBlankField(true);
@@ -71,16 +77,35 @@ public class HelpCommand extends Command {
         eb.addBlankField(true);
         eb.addField("Music Commands: ",
                 "\n\n>join <channel name>   :   to make the bot join a voice channel" +
-                        "\n\n>q <song/playlist>   :   if no song or playlist is provided a random one will be played" +
+                        "\n\n>q <song or playlist>   :   if no song or playlist is provided a random one will be played" +
                         "\n\n>next   :   Move to the next song in the playlist" +
                         "\n\n>pause   :   pause the music" +
                         "\n\n>play   :   resume the music" +
                         "\n\n>np   :   show the name of the song that's playing" +
                         "\n\n>leave   :   leave the voice channel", false);
+        eb.setColor(new Color(242, 242, 242));
 
-        eb.addBlankField(false);
-        eb.addField("", "Mem usage: " + (usedMemory/1000000) + "MB", true);
-        eb.addField("", "Ping: " + (jda.getPing()) + "ms", false);
+        return eb;
+    }
+
+
+    /**
+     * Used to get information about the bot
+     * @param e The event containing all information about the server
+     * @return the embed to send back
+     */
+    private EmbedBuilder usageEmbed(MessageReceivedEvent e) {
+        EmbedBuilder eb = new EmbedBuilder();
+        JDA jda = e.getJDA();
+        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+        eb.setAuthor(jda.getSelfUser().getName(), "https://www.artstation.com", jda.getSelfUser().getAvatarUrl());
+        eb.addField("Mem Usage: ", (usedMemory/1000000) + "MB", true);
+        eb.addField("Users: ", Integer.toString(jda.getUsers().size()), true);
+        eb.addField("Guilds: ", Integer.toString(jda.getGuilds().size()), true);
+        eb.addField("Channels: ", Integer.toString(jda.getTextChannels().size()), true);
+        eb.addField("Ping: ", jda.getPing() + "ms", true);
+        eb.addBlankField(true);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
