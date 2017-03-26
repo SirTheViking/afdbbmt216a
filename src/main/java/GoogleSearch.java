@@ -37,7 +37,7 @@ public class GoogleSearch extends Command {
                     ex.printStackTrace();
                 }
             }
-        } else if (e.isFromType(ChannelType.PRIVATE)){
+        } else if (message[0].equals(">g") && e.isFromType(ChannelType.PRIVATE)){
             e.getChannel().sendMessage("That command doesn't work here YET").queue();
         }
 
