@@ -1,7 +1,6 @@
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -38,7 +37,7 @@ public class GoogleSearch extends Command {
                     ex.printStackTrace();
                 }
             }
-        } else {
+        } else if (e.isFromType(ChannelType.PRIVATE)){
             e.getChannel().sendMessage("That command doesn't work here YET").queue();
         }
 
