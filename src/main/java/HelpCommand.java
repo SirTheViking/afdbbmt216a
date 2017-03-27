@@ -73,6 +73,7 @@ public class HelpCommand extends Command {
         eb.addBlankField(true);
         eb.addField("Commands: ", ">roll   :   rolls a number between 1 and x (x = 10 by default)" +
                         "\n\n>help   :   will bring up this menu" +
+                        "\n\n>g  <link>   :   google for anything and get the first result" +
                         "\n\nadding a dash '-' to a message will make the bot respond to it", false);
         eb.addBlankField(true);
         eb.addField("Music Commands: ",
