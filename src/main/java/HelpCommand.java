@@ -74,7 +74,8 @@ public class HelpCommand extends Command {
         eb.addField("Commands: ", ">roll   :   rolls a number between 1 and x (x = 10 by default)" +
                         "\n\n>help   :   will bring up this menu" +
                         "\n\n>g  <link>   :   google for anything and get the first result" +
-                        "\n\nadding a dash '-' to a message will make the bot respond to it", false);
+                        "\n\n>gets  <twitch channel name>   :   will return a link the the stream and wether or not the stream is live" +
+                        "\n\n\nadding a dash '-' to a message will make the bot respond to it", false);
         eb.addBlankField(true);
         eb.addField("Music Commands: ",
                 "\n\n>join <channel name>   :   to make the bot join a voice channel" +
