@@ -11,6 +11,7 @@ This is written using the JDA library
 * Ability to get Twitch stream links
 * A partial music player...
 * Google search //NOT 100% DONE YET
+* Twitch stream search and stream status: online/offline
 
 ## Things TODO:
 * Properly implement and polish the music command
