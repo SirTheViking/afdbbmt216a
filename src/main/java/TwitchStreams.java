@@ -17,6 +17,11 @@ public class TwitchStreams extends Command {
         if(e.isFromType(ChannelType.TEXT)) {
             String[] message = e.getMessage().getContent().split(" ");
 
+            /*
+                The usual server - database check for when I will
+                implement the custom prefix command.
+                Written on 27/03/2017
+             */
             String servername = e.getGuild().getName();
             if(!Database.checkForServer(servername)) {
                 Main.prefixes.put(servername, ">");
@@ -27,8 +32,14 @@ public class TwitchStreams extends Command {
                 if(message.length == 2) {
                     Thread streamThread = new Thread(() -> {
                         Twitch twitch = new Twitch();
-                        twitch.setClientId("client ID");
+                        twitch.setClientId(Main.clientID);
 
+                        /*
+                            Gets the streams with that name. For some reason
+                            if the stream is offline it won't show up as a stream
+                            so I had to fix that by checking if stream was null or
+                            not. Written on 27/03/2017
+                         */
                         twitch.streams().get(message[1], new StreamResponseHandler() {
                             @Override
                             public void onSuccess(Stream stream) {
@@ -37,6 +48,12 @@ public class TwitchStreams extends Command {
                                     String toSend = channel.getUrl() + " `Status: Live!`";
                                     e.getChannel().sendMessage(toSend).queue();
                                 } else {
+                                    /*
+                                        If the stream was offline I had to run new checks
+                                        but this time after the channel name instead, and
+                                        then send that directly through to discord.
+                                        Written on 27/03/2017
+                                     */
                                     getStreamChannel(e, twitch, message[1]);
                                 }
                             }
@@ -61,6 +78,13 @@ public class TwitchStreams extends Command {
 
     }
 
+    /**
+     * This method is used to get the channel in case the stream
+     * people are looking for is offline
+     * @param e The library event containing all the message information
+     * @param t The twitch object used to get twitch data
+     * @param name The streamer name provided by the user
+     */
     private void getStreamChannel(MessageReceivedEvent e, Twitch t, String name) {
 
         t.channels().get(name, new ChannelResponseHandler() {
