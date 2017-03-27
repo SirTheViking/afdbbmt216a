@@ -1,3 +1,9 @@
+import com.mb3364.twitch.api.Twitch;
+import com.mb3364.twitch.api.handlers.ChannelResponseHandler;
+import com.mb3364.twitch.api.handlers.StreamResponseHandler;
+import com.mb3364.twitch.api.models.Channel;
+import com.mb3364.twitch.api.models.Stream;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -7,62 +13,73 @@ public class TwitchStreams extends Command {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
-        respondToMessage(e);
+
+        if(e.isFromType(ChannelType.TEXT)) {
+            String[] message = e.getMessage().getContent().split(" ");
+
+            String servername = e.getGuild().getName();
+            if(!Database.checkForServer(servername)) {
+                Main.prefixes.put(servername, ">");
+                Database.writeToPrefixes(servername);
+            }
+
+            if(setAliases(Main.prefixes.get(servername), "gets").contains(message[0])) {
+                if(message.length == 2) {
+                    Thread streamThread = new Thread(() -> {
+                        Twitch twitch = new Twitch();
+                        twitch.setClientId("client ID");
+
+                        twitch.streams().get(message[1], new StreamResponseHandler() {
+                            @Override
+                            public void onSuccess(Stream stream) {
+                                if(stream != null) {
+                                    Channel channel = stream.getChannel();
+                                    String toSend = channel.getUrl() + " `Status: Live!`";
+                                    e.getChannel().sendMessage(toSend).queue();
+                                } else {
+                                    getStreamChannel(e, twitch, message[1]);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int i, String s, String s1) {
+                                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " I couldn't find anything with the name that you provided.").queue();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Twitch seems to have given me an error, please try again later.").queue();
+                            }
+                        });
+                    });
+                    streamThread.start();
+                } else {
+                    e.getChannel().sendMessage(e.getAuthor().getAsMention() + " I need a name to look for on Twitch.").queue();
+                }
+            }
+        }
+
     }
 
-    private void respondToMessage(MessageReceivedEvent e) {
-        /*
-            The most common variables will always
-            be declared at the top. I will attempt to
-            keep this pattern up throughout the document.
-            Written on 20/03/2017
-         */
-        MessageChannel channel = e.getChannel();
-        String mention = e.getAuthor().getAsMention();
+    private void getStreamChannel(MessageReceivedEvent e, Twitch t, String name) {
 
-        String servername = "PRIVATE"; //This is temporary
-        if(e.isFromType(ChannelType.TEXT)) {
-            servername = e.getGuild().getName();
-        }
-        /*
-            As every command class will eventually contain this
-            It checks whether or not the HashMap already contains
-            the server that the message is being sent from. If not
-            then it adds it. Written on 21/03/2017
-         */
-        if(!Database.checkForServer(servername) && (!servername.equals("PRIVATE"))) {
-            Main.prefixes.put(servername, ">");
-            Database.writeToPrefixes(servername);
-        }
+        t.channels().get(name, new ChannelResponseHandler() {
+            @Override
+            public void onSuccess(Channel channel) {
+                String toSend = channel.getUrl() + " `Status: Offline.`";
+                e.getChannel().sendMessage(toSend).queue();
+            }
 
-        String[] message = e.getMessage().getContent().split(" ");
-        /*
-            This part is used to get stream links
-            Written on 21/03/2017
-         */
-        if(setAliases(Main.prefixes.get(servername), "get").contains(message[0])) {
-            Thread getStream = new Thread(() -> {
-                String streamLink = Database.getTwitchStream(message[1]);
-                channel.sendMessage(mention + " " + streamLink).queue();
-            });
-            getStream.start();
-        }
-        /*
-            This part is used to upload stream links
-            and usernames with the command format
-            >add streamer_name stream_link. Written on 21/03/2017
-         */
-        else if(setAliases(Main.prefixes.get(servername), "add").contains(message[0])) {
-            Thread addStream = new Thread(() -> {
-                if(message.length == 2) {
-                    String stream_link = message[1];
-                    String response = Database.addTwitchStream(stream_link);
+            @Override
+            public void onFailure(int i, String s, String s1) {
+                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " I couldn't find anything with the name that you provided.").queue();
+            }
 
-                    channel.sendMessage(mention + response).queue();
-                }
-            });
-            addStream.start();
-        }
+            @Override
+            public void onFailure(Throwable throwable) {
+                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Twitch seems to have given me an error, please try again later.").queue();
+            }
+        });
     }
 
 }
