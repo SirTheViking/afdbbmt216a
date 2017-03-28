@@ -21,17 +21,8 @@ public class GoogleSearch extends Command {
         String[] message = e.getMessage().getContent().split(" ", 2);
 
         if(e.isFromType(ChannelType.TEXT)) {
-            /*
-            As every command class will eventually contain this
-            It checks whether or not the HashMap already contains
-            the server that the message is being sent from. If not
-            then it adds it. Written on 27/03/2017
-         */
+
             String servername = e.getGuild().getName();
-            if(!Database.checkForServer(servername)) {
-                Main.prefixes.put(servername, ">");
-                Database.writeToPrefixes(servername);
-            }
 
             if(setAliases(Main.prefixes.get(servername), "g").contains(message[0])) {
                 MessageChannel channel = e.getChannel();

@@ -13,18 +13,9 @@ public class TwitchStreams extends Command {
     public void onMessageReceived(MessageReceivedEvent e) {
 
         if(e.isFromType(ChannelType.TEXT)) {
-            String[] message = e.getMessage().getContent().split(" ");
-
-            /*
-                The usual server - database check for when I will
-                implement the custom prefix command.
-                Written on 27/03/2017
-             */
             String servername = e.getGuild().getName();
-            if(!Database.checkForServer(servername)) {
-                Main.prefixes.put(servername, ">");
-                Database.writeToPrefixes(servername);
-            }
+
+            String[] message = e.getMessage().getContent().split(" ");
 
             if(setAliases(Main.prefixes.get(servername), "gets").contains(message[0])) {
                 if(message.length == 2) {

@@ -23,9 +23,7 @@ public class HelpCommand extends Command {
      */
     private void respondToMessage(MessageReceivedEvent e) {
         if(e.isFromType(ChannelType.TEXT)) {
-            String message = e.getMessage().getContent();
-
-        /*
+            /*
             As every command class will eventually contain this
             It checks whether or not the HashMap already contains
             the server that the message is being sent from. If not
@@ -37,6 +35,8 @@ public class HelpCommand extends Command {
                 Database.writeToPrefixes(servername);
             }
 
+            String message = e.getMessage().getContent();
+
             if(message.equals(">getUsage")) {
                 Thread usageThread = new Thread(() -> {
                     MessageChannel channel = e.getChannel();
@@ -47,6 +47,17 @@ public class HelpCommand extends Command {
             }
 
             if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
+                Thread messageThread = new Thread(() -> {
+                    MessageChannel channel = e.getChannel();
+                    EmbedBuilder eb = helpEmbed(e);
+                    channel.sendMessage(eb.build()).queue();
+                });
+                messageThread.start();
+            }
+        } else if (e.isFromType(ChannelType.PRIVATE)) {
+            String message = e.getMessage().getContent();
+
+            if(setAliases(">", "help", "commands").contains(message)) {
                 Thread messageThread = new Thread(() -> {
                     MessageChannel channel = e.getChannel();
                     EmbedBuilder eb = helpEmbed(e);

@@ -27,17 +27,6 @@ public class Cleverbot extends Command {
         String msg = e.getMessage().getContent();
 
         if(e.isFromType(ChannelType.TEXT) && (msg.indexOf("-") == 0) && !e.getAuthor().isBot()) {
-            /*
-            As every command class will eventually contain this
-            It checks whether or not the HashMap already contains
-            the server that the message is being sent from. If not
-            then it adds it. Written on 19/03/2017
-         */
-            String servername = e.getGuild().getName(); //This is temporary
-            if(!Database.checkForServer(servername)) {
-                Main.prefixes.put(servername, ">");
-                Database.writeToPrefixes(servername);
-            }
 
             Thread messageThread = new Thread(() -> {
                 MessageChannel channel = e.getChannel();
