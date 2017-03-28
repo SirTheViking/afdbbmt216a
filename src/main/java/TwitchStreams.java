@@ -3,11 +3,9 @@ import com.mb3364.twitch.api.handlers.ChannelResponseHandler;
 import com.mb3364.twitch.api.handlers.StreamResponseHandler;
 import com.mb3364.twitch.api.models.Channel;
 import com.mb3364.twitch.api.models.Stream;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.audio.AudioSendHandler;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+
 
 public class TwitchStreams extends Command {
 
