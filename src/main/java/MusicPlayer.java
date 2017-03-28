@@ -30,10 +30,6 @@ public class MusicPlayer extends Command {
             User author = e.getAuthor();
 
             String servername = e.getGuild().getName();
-            if(!Database.checkForServer(servername)) {
-                Main.prefixes.put(servername, ">");
-                Database.writeToPrefixes(servername);
-            }
 
             String[] message = e.getMessage().getContent().split(" ");
             if(setAliases(Main.prefixes.get(servername), "join").contains(message[0])) {
