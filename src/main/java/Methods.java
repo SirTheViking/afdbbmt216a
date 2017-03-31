@@ -8,6 +8,9 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Methods {
 
     /*
@@ -91,5 +94,19 @@ public class Methods {
                 e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Something happened and I couldn't load what you provided").queue();
             }
         });
+    }
+
+
+
+
+    public static List<String> getParameters(List<String> message) {
+        List<String> parameters = new ArrayList<>();
+        for(int i = 0; i < message.size(); i++) {
+            String part = message.get(i);
+            if(part.startsWith("--")) {
+                parameters.add(part);
+            }
+        }
+        return parameters;
     }
 }

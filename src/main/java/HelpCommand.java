@@ -5,8 +5,12 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class HelpCommand extends Command {
+
+    private final List<String> aliases = setAliases(">", "help", "commands");
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
@@ -29,34 +33,37 @@ public class HelpCommand extends Command {
             then it adds it. Written on 20/03/2017
          */
             String servername = e.getGuild().getName();
-            if(!Database.checkForServer(servername)) {
-                Main.prefixes.put(servername, ">");
-                Database.writeToPrefixes(servername);
-            }
+            List<String> message = Arrays.asList(e.getMessage().getContent().split(" "));
 
-            String message = e.getMessage().getContent();
+            if(aliases.contains(message.get(0))) {
+                List<String> parameters = Methods.getParameters(message);
 
-            if(message.equals(">getUsage")) {
-                Thread usageThread = new Thread(() -> {
-                    MessageChannel channel = e.getChannel();
-                    EmbedBuilder eb = usageEmbed(e);
-                    channel.sendMessage(eb.build()).queue();
-                });
-                usageThread.start();
-            }
-
-            if(setAliases(Main.prefixes.get(servername), "help", "commands").contains(message)) {
-                Thread messageThread = new Thread(() -> {
-                    MessageChannel channel = e.getChannel();
-                    EmbedBuilder eb = helpEmbed(e);
-                    channel.sendMessage(eb.build()).queue();
-                });
-                messageThread.start();
+                if(parameters.size() > 0) {
+                    for(String param : parameters) {
+                        switch (param) {
+                            case "--status":
+                                Thread usageThread = new Thread(() -> {
+                                    MessageChannel channel = e.getChannel();
+                                    EmbedBuilder eb = usageEmbed(e);
+                                    channel.sendMessage(eb.build()).queue();
+                                });
+                                usageThread.start();
+                                break;
+                        }
+                    }
+                } else if(parameters.size() == 0) {
+                    Thread messageThread = new Thread(() -> {
+                        MessageChannel channel = e.getChannel();
+                        EmbedBuilder eb = helpEmbed(e);
+                        channel.sendMessage(eb.build()).queue();
+                    });
+                    messageThread.start();
+                }
             }
         } else if (e.isFromType(ChannelType.PRIVATE)) {
             String message = e.getMessage().getContent();
 
-            if(setAliases(">", "help", "commands").contains(message)) {
+            if(aliases.contains(message)) {
                 Thread messageThread = new Thread(() -> {
                     MessageChannel channel = e.getChannel();
                     EmbedBuilder eb = helpEmbed(e);
