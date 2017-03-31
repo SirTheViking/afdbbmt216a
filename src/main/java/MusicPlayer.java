@@ -69,39 +69,12 @@ public class MusicPlayer extends Command {
                 Written on 26/03/2017
              */
             else if(setAliases(Main.prefixes.get(servername), "q").contains(message[0])) {
-                TrackScheduler trackScheduler = Main.schedulers.get(servername);
                 String song = "https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi";
 
                 if(message.length == 2) {
                     song = message[1];
                 }
-
-                if(trackScheduler == null) {
-                    channel.sendMessage(author.getAsMention() + " I need to be in a voice channel first.").queue();
-                    return;
-                }
-
-                Main.playerManager.loadItem(song, new AudioLoadResultHandler() {
-                    @Override
-                    public void trackLoaded(AudioTrack audioTrack) {
-                        trackScheduler.queue(audioTrack);
-                    }
-
-                    @Override
-                    public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                        audioPlaylist.getTracks().forEach(trackScheduler::queue);
-                    }
-                    @Override
-                    public void noMatches() {
-                        e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Make sure the playlist/song isn't private.").queue();
-                    }
-
-                    @Override
-                    public void loadFailed(FriendlyException ex) {
-                        e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Something happened and I couldn't load what you provided").queue();
-                    }
-                });
-
+                Methods.queueTrack(e, song, servername);
             }
 
             /*
@@ -110,8 +83,7 @@ public class MusicPlayer extends Command {
                 Written on 26/03/2017
              */
             else if(setAliases(Main.prefixes.get(servername), "next").contains(message[0])) {
-                TrackScheduler trackScheduler = Main.schedulers.get(servername);
-                trackScheduler.nextTrack();
+                Methods.getNext(servername);
             }
 
             /*
@@ -119,9 +91,7 @@ public class MusicPlayer extends Command {
                 Written on 26/03/2017
              */
             else if(setAliases(Main.prefixes.get(servername), "pause").contains(message[0])) {
-                TrackScheduler trackScheduler = Main.schedulers.get(servername);
-                trackScheduler.getPlayer().setPaused(true);
-                channel.sendMessage(author.getAsMention() + " Player paused.").queue();
+                Methods.pausePlayer(e, servername);
             }
 
             /*
@@ -129,9 +99,7 @@ public class MusicPlayer extends Command {
                 Written on 26/03/2017
              */
             else if(setAliases(Main.prefixes.get(servername), "play").contains(message[0])) {
-                TrackScheduler trackScheduler = Main.schedulers.get(servername);
-                trackScheduler.getPlayer().setPaused(false);
-                channel.sendMessage(author.getAsMention() + " Player running.").queue();
+                Methods.resumePlayer(e, servername);
             }
 
             /*
@@ -139,9 +107,7 @@ public class MusicPlayer extends Command {
                 Written on 26/03/2017
              */
             else if(setAliases(Main.prefixes.get(servername), "np").contains(message[0])) {
-                TrackScheduler trackScheduler = Main.schedulers.get(servername);
-                String playing = trackScheduler.getPlayer().getPlayingTrack().getInfo().title;
-                channel.sendMessage(author.getAsMention() + " " + playing).queue();
+                Methods.playingTrack(e, servername);
             }
 
             /*
@@ -150,9 +116,7 @@ public class MusicPlayer extends Command {
              */
             else if(setAliases(Main.prefixes.get(servername), "leave").contains(message[0])) {
                 Guild guild = e.getGuild();
-
-                AudioManager manager = guild.getAudioManager();
-                manager.closeAudioConnection();
+                Methods.leaveVoice(guild);
             }
 
         }

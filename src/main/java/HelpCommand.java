@@ -24,8 +24,7 @@ public class HelpCommand extends Command {
     private void respondToMessage(MessageReceivedEvent e) {
         if(e.isFromType(ChannelType.TEXT)) {
             /*
-            As every command class will eventually contain this
-            It checks whether or not the HashMap already contains
+            This checks whether or not the HashMap already contains
             the server that the message is being sent from. If not
             then it adds it. Written on 20/03/2017
          */
