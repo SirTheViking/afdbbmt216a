@@ -1,8 +1,4 @@
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -32,7 +28,7 @@ public class MusicPlayer extends Command {
             String servername = e.getGuild().getName();
 
             String[] message = e.getMessage().getContent().split(" ");
-            if(setAliases(Main.prefixes.get(servername), "join").contains(message[0])) {
+            if(setAliases(">", "join").contains(message[0])) {
                 Guild guild = e.getGuild();
                 String channelName;
             /*
@@ -68,7 +64,7 @@ public class MusicPlayer extends Command {
                 Maybe you can mix SoundCloud and YouTube idk YET.
                 Written on 26/03/2017
              */
-            else if(setAliases(Main.prefixes.get(servername), "q").contains(message[0])) {
+            else if(setAliases(">", "q").contains(message[0])) {
                 String song = "https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi";
 
                 if(message.length == 2) {
@@ -82,7 +78,7 @@ public class MusicPlayer extends Command {
                 play the next song
                 Written on 26/03/2017
              */
-            else if(setAliases(Main.prefixes.get(servername), "next").contains(message[0])) {
+            else if(setAliases(">", "next").contains(message[0])) {
                 Methods.getNext(servername);
             }
 
@@ -90,7 +86,7 @@ public class MusicPlayer extends Command {
                 Pause the player.
                 Written on 26/03/2017
              */
-            else if(setAliases(Main.prefixes.get(servername), "pause").contains(message[0])) {
+            else if(setAliases(">", "pause").contains(message[0])) {
                 Methods.pausePlayer(e, servername);
             }
 
@@ -98,7 +94,7 @@ public class MusicPlayer extends Command {
                 Resume the player.
                 Written on 26/03/2017
              */
-            else if(setAliases(Main.prefixes.get(servername), "play").contains(message[0])) {
+            else if(setAliases(">", "play").contains(message[0])) {
                 Methods.resumePlayer(e, servername);
             }
 
@@ -106,7 +102,7 @@ public class MusicPlayer extends Command {
                 Get the song that's playing.
                 Written on 26/03/2017
              */
-            else if(setAliases(Main.prefixes.get(servername), "np").contains(message[0])) {
+            else if(setAliases(">", "np").contains(message[0])) {
                 Methods.playingTrack(e, servername);
             }
 
@@ -114,7 +110,7 @@ public class MusicPlayer extends Command {
                 Leave the channel that the bot is currently in.
                 Written on 26/03/2017
              */
-            else if(setAliases(Main.prefixes.get(servername), "leave").contains(message[0])) {
+            else if(setAliases(">", "leave").contains(message[0])) {
                 Guild guild = e.getGuild();
                 Methods.leaveVoice(guild);
             }

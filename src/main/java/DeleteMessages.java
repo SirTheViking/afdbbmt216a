@@ -20,7 +20,7 @@ public class DeleteMessages extends Command {
             String servername = e.getGuild().getName();
             String[] messages = e.getMessage().getContent().split(" ");
 
-            if(setAliases(Main.prefixes.get(servername), "rm", "delete").contains(messages[0])) {
+            if(setAliases(">", "rm", "delete").contains(messages[0])) {
 
                 Thread deleteThread = new Thread(() -> {
                     int toDelete = 10;
@@ -46,7 +46,7 @@ public class DeleteMessages extends Command {
                     }
                 });
                 deleteThread.start();
-            } else if(setAliases(Main.prefixes.get(servername), "nuke").contains(messages[0])) {
+            } else if(setAliases(">", "nuke").contains(messages[0])) {
 
                 Thread deleteThread = new Thread(() -> {
                     int toDelete = 100;

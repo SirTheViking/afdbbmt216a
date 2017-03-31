@@ -17,7 +17,7 @@ public class TwitchStreams extends Command {
 
             String[] message = e.getMessage().getContent().split(" ");
 
-            if(setAliases(Main.prefixes.get(servername), "gets").contains(message[0])) {
+            if(setAliases(">", "gets").contains(message[0])) {
                 if(message.length == 2) {
                     Thread streamThread = new Thread(() -> {
                         Twitch twitch = new Twitch();

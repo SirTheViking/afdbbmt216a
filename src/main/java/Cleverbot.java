@@ -14,8 +14,6 @@ public class Cleverbot extends Command {
     public void onMessageReceived(MessageReceivedEvent e) {
         respondToMessage(e);
     }
-
-
     /**
      * Creates a new thread and processes the message that was sent
      * by the user. doesn't return anything because it straight

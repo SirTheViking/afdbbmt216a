@@ -29,7 +29,7 @@ public class RollCommand extends Command {
             String servername = e.getGuild().getName();
 
             String[] message = e.getMessage().getContent().split(" ");
-            if(setAliases(Main.prefixes.get(servername), "roll", "dice").contains(message[0])) {
+            if(setAliases(">", "roll", "dice").contains(message[0])) {
             /*
                 Everything in here runs if the message properly contains
                 the prefix + roll or dice as the first word of the sentence

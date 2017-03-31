@@ -24,7 +24,7 @@ public class GoogleSearch extends Command {
 
             String servername = e.getGuild().getName();
 
-            if(setAliases(Main.prefixes.get(servername), "g").contains(message[0])) {
+            if(setAliases(">", "g").contains(message[0])) {
                 MessageChannel channel = e.getChannel();
                 User author = e.getAuthor();
                 // If a link was provided
