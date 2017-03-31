@@ -42,34 +42,25 @@ public class HelpCommand extends Command {
                     for(String param : parameters) {
                         switch (param) {
                             case "--status":
-                                Thread usageThread = new Thread(() -> {
-                                    MessageChannel channel = e.getChannel();
-                                    EmbedBuilder eb = usageEmbed(e);
-                                    channel.sendMessage(eb.build()).queue();
-                                });
-                                usageThread.start();
+                                MessageChannel channel = e.getChannel();
+                                EmbedBuilder eb = usageEmbed(e);
+                                channel.sendMessage(eb.build()).queue();
                                 break;
                         }
                     }
                 } else if(parameters.size() == 0) {
-                    Thread messageThread = new Thread(() -> {
-                        MessageChannel channel = e.getChannel();
-                        EmbedBuilder eb = helpEmbed(e);
-                        channel.sendMessage(eb.build()).queue();
-                    });
-                    messageThread.start();
+                    MessageChannel channel = e.getChannel();
+                    EmbedBuilder eb = helpEmbed(e);
+                    channel.sendMessage(eb.build()).queue();
                 }
             }
         } else if (e.isFromType(ChannelType.PRIVATE)) {
             String message = e.getMessage().getContent();
 
             if(aliases.contains(message)) {
-                Thread messageThread = new Thread(() -> {
-                    MessageChannel channel = e.getChannel();
-                    EmbedBuilder eb = helpEmbed(e);
-                    channel.sendMessage(eb.build()).queue();
-                });
-                messageThread.start();
+                MessageChannel channel = e.getChannel();
+                EmbedBuilder eb = helpEmbed(e);
+                channel.sendMessage(eb.build()).queue();
             }
         }
     }
