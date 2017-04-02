@@ -14,6 +14,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +23,7 @@ public class Methods {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36";
     private static final String GOOGLE_URL = "https://google.com/search?q=";
-
-
+    private static final String SOUNDCLOUD_URL = "https://soundcloud.com/search/";
 
     /*
         TODO Properly comment the entire class ASAP
@@ -40,8 +41,9 @@ public class Methods {
         User author = e.getAuthor();
 
         TrackScheduler trackScheduler = Main.schedulers.get(servername);
-        String playing = trackScheduler.getPlayer().getPlayingTrack().getInfo().title;
-        channel.sendMessage(author.getAsMention() + " " + playing).queue();
+        String link = trackScheduler.getPlayer().getPlayingTrack().getInfo().uri;
+
+        channel.sendMessage(author.getAsMention() + " " + link).queue();
     }
 
 
@@ -122,7 +124,7 @@ public class Methods {
     }
 
 
-    public static String getGoogleQuery(String[] message) {
+    public static String removeParamUrlEncoded(String[] message) {
         StringBuilder sb = new StringBuilder();
         for (String aMessage : message) {
             if (aMessage.startsWith("--") || aMessage.startsWith(">")) {
@@ -161,18 +163,67 @@ public class Methods {
 
 
 
+
+    public static String querySoundCloud(String encodedQuery, String type) {
+        try {
+            final Elements els = Jsoup.connect(SOUNDCLOUD_URL + type + "?q=" + encodedQuery)
+                    .userAgent(USER_AGENT)
+                    .get()
+                    .select("ul");
+
+            Element el = els.get(1).select("a").get(1);
+            System.out.println(el.absUrl("href"));
+            return el.absUrl("href");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return " Something went wrong and I couldn't find what you were looking for.";
+        }
+    }
+
+
+
+
     public static void joinVoiceChannel(MessageReceivedEvent e, String channelName, String servername) {
         Guild guild = e.getGuild();
-        VoiceChannel vchannel = guild.getVoiceChannelsByName(channelName, true).get(0);
+        VoiceChannel vchannel;
+        try {
+            vchannel = guild.getVoiceChannelsByName(channelName, true).get(0);
+        } catch (IndexOutOfBoundsException ex) {
+            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " The channel you told me to join doesn't exist.").queue();
+            return;
+        }
         AudioManager manager = guild.getAudioManager();
         AudioPlayer player = Main.playerManager.createPlayer();
         TrackScheduler trackScheduler = new TrackScheduler(player);
 
         Main.schedulers.put(servername, trackScheduler);
-
         player.addListener(trackScheduler);
 
         manager.setSendingHandler(new AudioPlayerSendHandler(player));
         manager.openAudioConnection(vchannel);
+    }
+
+
+
+
+    /*-------------------------------------------
+        Utilities
+     ------------------------------------------*/
+
+
+
+    /**
+     * Used to encode the query that will be sent
+     * to google as a search query
+     * @param s the string to encode
+     * @return the encoded string
+     */
+    public static String encodeString(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+        return "error";
     }
 }

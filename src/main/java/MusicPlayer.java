@@ -45,7 +45,6 @@ public class MusicPlayer extends Command {
                     Written on 26/03/2017
                     */
                     List<String> parameters = Methods.getParameters(message);
-                    String query = Methods.getGoogleQuery(message);
                     String song = "https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi";
                     String vChannel = "general";
                     if(parameters.size() > 0) {
@@ -56,10 +55,31 @@ public class MusicPlayer extends Command {
                             }
                             switch(param) {
                                 case "--g":
-                                    song = Methods.queryGoogle(query);
+                                    String gQuery = Methods.removeParamUrlEncoded(message);
+                                    String gEncodedQuery = Methods.encodeString(gQuery);
+                                    song = Methods.queryGoogle(gEncodedQuery);
                                     break;
+
                                 case "--join":
                                     Methods.joinVoiceChannel(e, vChannel, servername);
+                                    break;
+
+                                case "--sc":
+                                    String sQuery = Methods.removeParamUrlEncoded(message);
+                                    String sEncodedQuery = Methods.encodeString(sQuery);
+                                    String type = "";
+                                    for(String par : parameters) {
+                                        switch (par) {
+                                            case "--s":
+                                                type = "sounds";
+                                                break;
+
+                                            case "--ps":
+                                                type = "sets";
+                                                break;
+                                        }
+                                    }
+                                    song = Methods.querySoundCloud(sEncodedQuery, type);
                                     break;
                             }
                         }

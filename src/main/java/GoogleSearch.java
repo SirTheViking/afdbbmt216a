@@ -29,7 +29,7 @@ public class GoogleSearch extends Command {
 
             if(aliases.contains(message[0])) {
                 List<String> parameters = Methods.getParameters(message);
-                String query = Methods.getGoogleQuery(message);
+                String query = Methods.removeParamUrlEncoded(message);
 
                 MessageChannel channel = e.getChannel();
                 User author = e.getAuthor();
@@ -38,15 +38,14 @@ public class GoogleSearch extends Command {
                     for(String param : parameters) {
                         switch (param) {
                             case "--q":
-                                String encodedQuery = encodeString(query);
-                                String link = Methods.queryGoogle(encodedQuery);
+                                String link = Methods.queryGoogle(query);
                                 Methods.queueTrack(e, link, servername);
                                 break;
                         }
                     }
                     return;
                 } else if (parameters.size() == 0){
-                    String encodedQuery = encodeString(query);
+                    String encodedQuery = Methods.encodeString(query);
 
                     long start = System.currentTimeMillis();
                     String link = Methods.queryGoogle(encodedQuery);
@@ -65,20 +64,5 @@ public class GoogleSearch extends Command {
 
     }
 
-
-    /**
-     * Used to encode the query that will be sent
-     * to google as a search query
-     * @param s the string to encode
-     * @return the encoded string
-     */
-    private static String encodeString(String s) {
-        try {
-            return URLEncoder.encode(s, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            ex.printStackTrace();
-        }
-        return "error";
-    }
 
 }

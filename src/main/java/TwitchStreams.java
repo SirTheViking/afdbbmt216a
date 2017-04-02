@@ -64,7 +64,7 @@ public class TwitchStreams extends Command {
             public void onSuccess(Stream stream) {
                 if(stream != null) {
                     Channel channel = stream.getChannel();
-                    String toSend = channel.getUrl() + " `Status: Live!`";
+                    String toSend = channel.getUrl() + " `Status: Live! - Playing: " + stream.getGame() + "`";
                     e.getChannel().sendMessage(toSend).queue();
                 } else {
                     /*
