@@ -1,16 +1,10 @@
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.managers.AudioManager;
+
+import java.util.List;
 
 
 public class MusicPlayer extends Command {
-    /*
-        This is the first attempt at a voice/music
-        player. It will be choppy and what not but I
-        will try and improve it as I go on.
-        Written on 22/03/
-     */
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
@@ -24,97 +18,98 @@ public class MusicPlayer extends Command {
 
             MessageChannel channel = e.getChannel();
             User author = e.getAuthor();
-
+            Guild guild = e.getGuild();
             String servername = e.getGuild().getName();
 
             String[] message = e.getMessage().getContent().split(" ");
-            if(setAliases(">", "join").contains(message[0])) {
-                Guild guild = e.getGuild();
-                String channelName;
-            /*
-                This will be the first voice channel
-                with the name, not case sensitive
-            */
-                if (message.length > 1) {
-                    channelName = message[1];
-                } else {
-                    channel.sendMessage(author.getAsMention() + " Please specify a channel to join.").queue();
-                    return;
-                }
-            /*
-                Might wanna check if the channel exists
-                and send out a message if it doesn't
-                Written on 22/03/2017
-             */
-                VoiceChannel vchannel = guild.getVoiceChannelsByName(channelName, true).get(0);
-                AudioManager manager = guild.getAudioManager();
-                AudioPlayer player = Main.playerManager.createPlayer();
-                TrackScheduler trackScheduler = new TrackScheduler(player);
+            switch (message[0]) {
 
-                Main.schedulers.put(servername, trackScheduler);
+                case ">join":
+                    String channelName;
+                    /*
+                       This will be the first voice channel
+                       with the name, not case sensitive
+                    */
+                    if (message.length > 1) {
+                        channelName = message[1];
+                    } else {
+                        channel.sendMessage(author.getAsMention() + " Please specify a channel to join.").queue();
+                        return;
+                    }
+                    Methods.joinVoiceChannel(e, channelName, servername);
+                    break;
 
-                player.addListener(trackScheduler);
+                case ">q":
+                    /*
+                    Queues a song from a link, or a playlist
+                    Written on 26/03/2017
+                    */
+                    List<String> parameters = Methods.getParameters(message);
+                    String query = Methods.getGoogleQuery(message);
+                    String song = "https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi";
+                    String vChannel = "general";
+                    if(parameters.size() > 0) {
+                        for(String param : parameters) {
+                            if(param.startsWith("--join") && param.length() > 6) {
+                                vChannel = param.split(":")[1];
+                                param = "--join";
+                            }
+                            switch(param) {
+                                case "--g":
+                                    song = Methods.queryGoogle(query);
+                                    break;
+                                case "--join":
+                                    Methods.joinVoiceChannel(e, vChannel, servername);
+                                    break;
+                            }
+                        }
+                    } else if (message.length == 2 && parameters.size() == 0) {
+                        song = message[1];
+                    }
+                    Methods.queueTrack(e, song, servername);
+                    break;
 
-                manager.setSendingHandler(new AudioPlayerSendHandler(player));
-                manager.openAudioConnection(vchannel);
+                case ">next":
+                    /*
+                    Move forward into the playlist and
+                    play the next song
+                    Written on 26/03/2017
+                    */
+                    Methods.getNext(servername);
+                    break;
+
+                case ">pause":
+                    /*
+                    Pause the player.
+                    Written on 26/03/2017
+                    */
+                    Methods.pausePlayer(e, servername);
+                    break;
+
+                case ">play":
+                    /*
+                    Resume the player.
+                    Written on 26/03/2017
+                    */
+                    Methods.resumePlayer(e, servername);
+                    break;
+
+                case ">np":
+                    /*
+                    Get the song that's playing.
+                    Written on 26/03/2017
+                    */
+                    Methods.playingTrack(e, servername);
+                    break;
+
+                case ">leave":
+                    /*
+                    Leave the channel that the bot is currently in.
+                    Written on 26/03/2017
+                    */
+                    Methods.leaveVoice(guild);
+                    break;
             }
-
-            /*
-                Queues a song from a link, or a playlist
-                Maybe you can mix SoundCloud and YouTube idk YET.
-                Written on 26/03/2017
-             */
-            else if(setAliases(">", "q").contains(message[0])) {
-                String song = "https://www.youtube.com/playlist?list=PL9GDpEaemvz7crT3RNl-ffvuoIC1-KpAi";
-
-                if(message.length == 2) {
-                    song = message[1];
-                }
-                Methods.queueTrack(e, song, servername);
-            }
-
-            /*
-                Move forward into the playlist and
-                play the next song
-                Written on 26/03/2017
-             */
-            else if(setAliases(">", "next").contains(message[0])) {
-                Methods.getNext(servername);
-            }
-
-            /*
-                Pause the player.
-                Written on 26/03/2017
-             */
-            else if(setAliases(">", "pause").contains(message[0])) {
-                Methods.pausePlayer(e, servername);
-            }
-
-            /*
-                Resume the player.
-                Written on 26/03/2017
-             */
-            else if(setAliases(">", "play").contains(message[0])) {
-                Methods.resumePlayer(e, servername);
-            }
-
-            /*
-                Get the song that's playing.
-                Written on 26/03/2017
-             */
-            else if(setAliases(">", "np").contains(message[0])) {
-                Methods.playingTrack(e, servername);
-            }
-
-            /*
-                Leave the channel that the bot is currently in.
-                Written on 26/03/2017
-             */
-            else if(setAliases(">", "leave").contains(message[0])) {
-                Guild guild = e.getGuild();
-                Methods.leaveVoice(guild);
-            }
-
         }
 
 

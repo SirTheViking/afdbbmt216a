@@ -27,11 +27,6 @@ public class Misc extends Command {
         JDA jda = e.getJDA();
 
         String message = e.getMessage().getContent();
-
-        String servername = "PRIVATE"; //This is temporary
-        if(e.isFromType(ChannelType.TEXT)) {
-            servername = e.getGuild().getName();
-        }
         /*
             This is for unflipping the table every time
             somebody, flips a table, in the
@@ -41,7 +36,7 @@ public class Misc extends Command {
             channel.sendMessage("┬─┬ノ( ゜-゜ノ) " + author.getAsMention() + " put that shit down").queue();
         }
 
-        if(setAliases(Main.prefixes.get(servername), "ping").contains(message)) {
+        if(setAliases(">", "ping").contains(message)) {
             channel.sendMessage("Pong! `" + jda.getPing() + "ms`").queue();
         }
     }

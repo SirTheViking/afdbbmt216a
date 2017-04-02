@@ -9,54 +9,55 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GoogleSearch extends Command {
 
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36";
-    private static final String GOOGLE_URL = "https://google.com/search?q=";
+    private final List<String> aliases = setAliases(">", "g");
+
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
 
-        String[] message = e.getMessage().getContent().split(" ", 2);
+        String[] message = e.getMessage().getContent().split(" ");
 
         if(e.isFromType(ChannelType.TEXT)) {
 
             String servername = e.getGuild().getName();
 
-            if(setAliases(">", "g").contains(message[0])) {
+            if(aliases.contains(message[0])) {
+                List<String> parameters = Methods.getParameters(message);
+                String query = Methods.getGoogleQuery(message);
+
                 MessageChannel channel = e.getChannel();
                 User author = e.getAuthor();
-                // If a link was provided
-                if (message.length == 2) {
-                    final String encodedQuery = encodeString(message[1]);
-                /*
-                    Get the first page of the returned
-                    google search results and retrieve all
-                    links from it. Written on 26/03/2017
-                 */
-                    try {
-                        long start = System.currentTimeMillis();
-                        final Elements els = Jsoup.connect(GOOGLE_URL + encodedQuery)
-                                .userAgent(USER_AGENT)
-                                .get()
-                                .select("h3.r a");
-                        long end = System.currentTimeMillis();
-                        long fTime = end - start;
-                    /*
-                        This only gets the first result.
-                        The user should be able to choose how many
-                        results they want. min/default = 1, max = 10.
-                        Written on 26/03/2017
-                     */
-                        Element el = els.get(0);
-                        channel.sendMessage(el.attr("href") + " `" + fTime + "ms`").queue();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+
+                if(parameters.size() > 0) {
+                    for(String param : parameters) {
+                        switch (param) {
+                            case "--q":
+                                String encodedQuery = encodeString(query);
+                                String link = Methods.queryGoogle(encodedQuery);
+                                Methods.queueTrack(e, link, servername);
+                                break;
+                        }
                     }
+                    return;
+                } else if (parameters.size() == 0){
+                    String encodedQuery = encodeString(query);
+
+                    long start = System.currentTimeMillis();
+                    String link = Methods.queryGoogle(encodedQuery);
+                    long end = System.currentTimeMillis();
+                    long fTime = end - start;
+
+                    channel.sendMessage(link + " `" + fTime + "ms`").queue();
                 } else {
                     channel.sendMessage(author.getAsMention() + " You need to give me some words to search after.").queue();
                 }
+
             }
         } else if (message[0].equals(">g") && e.isFromType(ChannelType.PRIVATE)){
             e.getChannel().sendMessage("That command doesn't work here YET").queue();

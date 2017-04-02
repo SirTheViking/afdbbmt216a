@@ -33,23 +33,22 @@ public class HelpCommand extends Command {
             then it adds it. Written on 20/03/2017
          */
             String servername = e.getGuild().getName();
-            List<String> message = Arrays.asList(e.getMessage().getContent().split(" "));
+            String[] message = e.getMessage().getContent().split(" ");
 
-            if(aliases.contains(message.get(0))) {
+            if(aliases.contains(message[0])) {
                 List<String> parameters = Methods.getParameters(message);
+                MessageChannel channel = e.getChannel();
 
                 if(parameters.size() > 0) {
                     for(String param : parameters) {
                         switch (param) {
                             case "--status":
-                                MessageChannel channel = e.getChannel();
                                 EmbedBuilder eb = usageEmbed(e);
                                 channel.sendMessage(eb.build()).queue();
                                 break;
                         }
                     }
                 } else if(parameters.size() == 0) {
-                    MessageChannel channel = e.getChannel();
                     EmbedBuilder eb = helpEmbed(e);
                     channel.sendMessage(eb.build()).queue();
                 }

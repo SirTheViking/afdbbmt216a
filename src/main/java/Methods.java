@@ -1,17 +1,28 @@
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Methods {
+
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36";
+    private static final String GOOGLE_URL = "https://google.com/search?q=";
+
+
 
     /*
         TODO Properly comment the entire class ASAP
@@ -99,14 +110,69 @@ public class Methods {
 
 
 
-    public static List<String> getParameters(List<String> message) {
+    public static List<String> getParameters(String[] message) {
         List<String> parameters = new ArrayList<>();
-        for(int i = 0; i < message.size(); i++) {
-            String part = message.get(i);
-            if(part.startsWith("--")) {
-                parameters.add(part);
+        for (String aMessage : message) {
+            if (aMessage.startsWith("--")) {
+                System.out.println(aMessage);
+                parameters.add(aMessage);
             }
         }
         return parameters;
+    }
+
+
+    public static String getGoogleQuery(String[] message) {
+        StringBuilder sb = new StringBuilder();
+        for (String aMessage : message) {
+            if (aMessage.startsWith("--") || aMessage.startsWith(">")) {
+                continue;
+            }
+            sb.append(aMessage + " ");
+        }
+        return sb.toString();
+    }
+
+
+    public static String queryGoogle(String encodedQuery) {
+        /*
+           Get the first page of the returned
+           google search results and retrieve all
+           links from it. Written on 26/03/2017
+        */
+        try {
+            final Elements els = Jsoup.connect(GOOGLE_URL + encodedQuery)
+                    .userAgent(USER_AGENT)
+                    .get()
+                    .select("h3.r a");
+            /*
+               This only gets the first result.
+                The user should be able to choose how many
+                results they want. min/default = 1, max = 10.
+                Written on 26/03/2017
+            */
+            Element el = els.get(0);
+            return el.attr("href");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return " Something went wrong and I couldn't find what you were looking for.";
+        }
+    }
+
+
+
+    public static void joinVoiceChannel(MessageReceivedEvent e, String channelName, String servername) {
+        Guild guild = e.getGuild();
+        VoiceChannel vchannel = guild.getVoiceChannelsByName(channelName, true).get(0);
+        AudioManager manager = guild.getAudioManager();
+        AudioPlayer player = Main.playerManager.createPlayer();
+        TrackScheduler trackScheduler = new TrackScheduler(player);
+
+        Main.schedulers.put(servername, trackScheduler);
+
+        player.addListener(trackScheduler);
+
+        manager.setSendingHandler(new AudioPlayerSendHandler(player));
+        manager.openAudioConnection(vchannel);
     }
 }
