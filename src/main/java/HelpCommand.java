@@ -44,8 +44,7 @@ public class HelpCommand extends Command {
                         switch (param) {
                             case "--info":
                                 EmbedBuilder eb = usageEmbed(e);
-                                privateChannel.sendMessage(eb.build()).queue();
-                                channel.sendMessage(author.getAsMention() + " I've sent the bot stats to you.").queue();
+                                channel.sendMessage(eb.build()).queue();
                                 break;
 
                             case "--problems":
@@ -108,7 +107,7 @@ public class HelpCommand extends Command {
                         "\n\n>np   :   show the name of the song that's playing" +
                         "\n\n>leave   :   leave the voice channel", false);
         eb.addBlankField(true);
-        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
+        eb.setFooter("Made by: Rip#9604  -  Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
@@ -123,16 +122,16 @@ public class HelpCommand extends Command {
     private EmbedBuilder usageEmbed(MessageReceivedEvent e) {
         EmbedBuilder eb = new EmbedBuilder();
         JDA jda = e.getJDA();
-        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        //long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         eb.setAuthor(jda.getSelfUser().getName(), "https://www.artstation.com", jda.getSelfUser().getAvatarUrl());
-        eb.addField("Mem Usage: ", (usedMemory/1000000) + "MB", true);
+        //eb.addField("Mem Usage: ", (usedMemory/1000000) + "MB", true);
         eb.addField("Users: ", Integer.toString(jda.getUsers().size()), true);
         eb.addField("Guilds: ", Integer.toString(jda.getGuilds().size()), true);
-        eb.addField("Channels: ", Integer.toString(jda.getTextChannels().size()), true);
         eb.addField("Ping: ", jda.getPing() + "ms", true);
-        eb.addBlankField(true);
-        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
+        eb.addField("Author: ", "Rip#9604", true);
+        eb.addField("Library: ", "JDA", true);
+        eb.addField("GitHub: ", "soon™", true);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
@@ -150,7 +149,7 @@ public class HelpCommand extends Command {
                 "**Explanation:** If the bot is in 2 voice channels at the same time, let's say, playing a song" +
                 "if it were to leave one of them, the other server would get the bot to stop playing til you reconnect.", false);
         eb.addBlankField(true);
-        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
+        eb.setFooter("Made by: Rip#9604  -  Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
@@ -172,7 +171,7 @@ public class HelpCommand extends Command {
                 "\n\n**>q**   :   \n--sc (searches soundcloud), \n--s (searches sc song, this or --ps must be used), \n--ps (searches sc playlist, this or --s must be used), \n--g (first google result), \n--join:<voice channel name>" +
                 "\n\n**>gets**  :   TODO", true);
         eb.addBlankField(true);
-        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
+        eb.setFooter("Made by: Rip#9604  -  Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
