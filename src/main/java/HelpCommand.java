@@ -4,7 +4,6 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class HelpCommand extends Command {
@@ -46,26 +45,26 @@ public class HelpCommand extends Command {
                             case "--info":
                                 EmbedBuilder eb = usageEmbed(e);
                                 privateChannel.sendMessage(eb.build()).queue();
-                                channel.sendMessage(author.getAsMention() + " I've pm:ed the bot stats to you.").queue();
+                                channel.sendMessage(author.getAsMention() + " I've sent the bot stats to you.").queue();
                                 break;
 
                             case "--problems":
                                 EmbedBuilder bEb = bugsEmbed(e);
                                 privateChannel.sendMessage(bEb.build()).queue();
-                                channel.sendMessage(author.getAsMention() + " I've pm:ed you the list of problems.").queue();
+                                channel.sendMessage(author.getAsMention() + " I've sent you the list of problems.").queue();
                                 break;
 
                             case "--param":
                                 EmbedBuilder pEb = paramEmbed(e);
                                 privateChannel.sendMessage(pEb.build()).queue();
-                                channel.sendMessage(author.getAsMention() + " I've pm:ed you the list of parameters.").queue();
+                                channel.sendMessage(author.getAsMention() + " I've sent you the list of parameters.").queue();
                                 break;
                         }
                     }
                 } else if(parameters.size() == 0) {
                     EmbedBuilder eb = helpEmbed(e);
                     privateChannel.sendMessage(eb.build()).queue();
-                    channel.sendMessage(author.getAsMention() + " I've pm:ed the command list to you.").queue();
+                    channel.sendMessage(author.getAsMention() + " I've sent the command list to you.").queue();
                 }
             }
         } else if (e.isFromType(ChannelType.PRIVATE)) {
@@ -95,7 +94,7 @@ public class HelpCommand extends Command {
         eb.addBlankField(true);
         eb.addField("Commands: ", ">roll   :   rolls a number between 1 and x (x = 10 by default)" +
                         "\n\n>help   :   will bring up this menu" +
-                        "\n\n>help --param   :   will bring up the help menu for command parameters" +
+                        "\n\n_**NEW**_ >help --param   :   will bring up the help menu for command parameters" +
                         "\n\n>g  <link>   :   google for anything and get the first result" +
                         "\n\n>gets  <twitch channel name>   :   will return a link the the stream and wether or not the stream is live" +
                         "\n\n\nadding a dash '-' to a message will make the bot respond to it", false);
@@ -109,7 +108,7 @@ public class HelpCommand extends Command {
                         "\n\n>np   :   show the name of the song that's playing" +
                         "\n\n>leave   :   leave the voice channel", false);
         eb.addBlankField(true);
-        eb.setFooter("Made by: @Rip#9604", null);
+        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
@@ -133,6 +132,7 @@ public class HelpCommand extends Command {
         eb.addField("Channels: ", Integer.toString(jda.getTextChannels().size()), true);
         eb.addField("Ping: ", jda.getPing() + "ms", true);
         eb.addBlankField(true);
+        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
@@ -149,6 +149,8 @@ public class HelpCommand extends Command {
         eb.addField("Problems: ", "\nThe discord voice engine has a bug that affects the music player.\n" +
                 "**Explanation:** If the bot is in 2 voice channels at the same time, let's say, playing a song" +
                 "if it were to leave one of them, the other server would get the bot to stop playing til you reconnect.", false);
+        eb.addBlankField(true);
+        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
@@ -163,12 +165,14 @@ public class HelpCommand extends Command {
 
         eb.setAuthor(jda.getSelfUser().getName(), "http://artstation.com", jda.getSelfUser().getAvatarUrl());
         eb.addField("Parameters: ", "These are parameters that can be used in combination with commands:\n" +
-                "**Example:** >q --g you want a piece of me song --join:general -> will google for the song and" +
+                "**Example:** _>q --g you want a piece of me song --join:general_ -> will google for the song and" +
                 "queue it in the voice channel general." +
-                "\n\n**>help**   :   \n--param, \n--info, \n--problems" +
+                "\n\n**>help**   :   \n--param (brings up this menu), \n--info (brings up info about the bot), \n--problems (brings up problems about the bot)" +
                 "\n\n**>g**   :   \n--q (queues the google result)" +
-                "\n\n**>q**   :   \n--sc (searches soundcloud), \n--s (searches sc song), \n--ps (searches sc playlist), \n--g (first google result), \n--join:<voice channel name>" +
+                "\n\n**>q**   :   \n--sc (searches soundcloud), \n--s (searches sc song, this or --ps must be used), \n--ps (searches sc playlist, this or --s must be used), \n--g (first google result), \n--join:<voice channel name>" +
                 "\n\n**>gets**  :   TODO", true);
+        eb.addBlankField(true);
+        eb.setFooter("Made by: @Rip#9604   Feel free to contact with feedback or ask for help", null);
         eb.setColor(new Color(242, 242, 242));
 
         return eb;
