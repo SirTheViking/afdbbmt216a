@@ -116,7 +116,6 @@ public class Methods {
         List<String> parameters = new ArrayList<>();
         for (String aMessage : message) {
             if (aMessage.startsWith("--")) {
-                System.out.println(aMessage);
                 parameters.add(aMessage);
             }
         }
@@ -172,7 +171,6 @@ public class Methods {
                     .select("ul");
 
             Element el = els.get(1).select("a").get(1);
-            System.out.println(el.absUrl("href"));
             return el.absUrl("href");
         } catch (IOException ex) {
             ex.printStackTrace();
