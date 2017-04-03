@@ -39,10 +39,10 @@ public class DeleteMessages extends Command {
                    everywhere you should check if the bot has permission
                    to delete messages in the channel. Written on 20/03/2017
                  */
-                    if(e.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+                    if(e.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && e.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                         channel.getHistory().retrievePast(toDelete).queue(history -> channel.deleteMessages(history).queue());
                     } else {
-                        send.sendMessage(e.getAuthor().getAsMention() + ", I can't delete messages without admin.").queue();
+                        send.sendMessage(e.getAuthor().getAsMention() + ", One of us doesn't have permission to do that.").queue();
                     }
                 });
                 deleteThread.start();
@@ -57,10 +57,10 @@ public class DeleteMessages extends Command {
                         everywhere you should check if the bot has permission
                         to delete messages in the channel. Written on 20/03/2017
                     */
-                    if (e.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+                    if (e.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && e.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                         channel.getHistory().retrievePast(toDelete).queue(history -> channel.deleteMessages(history).queue());
                     } else {
-                        send.sendMessage(e.getAuthor().getAsMention() + ", I can't delete messages without admin.").queue();
+                        send.sendMessage(e.getAuthor().getAsMention() + ", One of us doesn't have permission to do that.").queue();
                     }
                 });
                 deleteThread.start();
@@ -69,9 +69,9 @@ public class DeleteMessages extends Command {
             String[] messages = e.getMessage().getContent().split(" ");
 
             if(setAliases(">", "rm", "delete").contains(messages[0])) {
-                e.getChannel().sendMessage("That command does not work here yet.").queue();
+                e.getChannel().sendMessage("You can't delete messages in a Private channel.").queue();
             } else if (setAliases(">", "nuke").contains(messages[0])) {
-                e.getChannel().sendMessage("That command does not work here yet.").queue();
+                e.getChannel().sendMessage("You can't delete messages in a Private channel.").queue();
             }
         }
 

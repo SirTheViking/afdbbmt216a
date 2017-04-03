@@ -15,7 +15,6 @@
 log/
 target/
 
-Database.java
 Main.java
 
 libs/

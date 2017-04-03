@@ -26,9 +26,9 @@ public class TwitchStreams extends Command {
 
             if(e.isFromType(ChannelType.TEXT)) {
                 if(message.length == 2) {
-                        Twitch twitch = new Twitch();
-                        twitch.setClientId(Main.clientID);
-                        getStream(e, twitch, message[1]);
+                    Twitch twitch = new Twitch();
+                    twitch.setClientId(Main.clientID);
+                    getStream(e, twitch, message[1]);
                 } else {
                     channel.sendMessage(author.getAsMention() + " I need a name to look for on Twitch.").queue();
                 }
