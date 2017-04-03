@@ -60,7 +60,7 @@ public class Info extends Command {
         eb.setThumbnail(guild.getIconUrl());
         eb.setAuthor(jda.getSelfUser().getName(), "http://artstation.com", jda.getSelfUser().getAvatarUrl());
         eb.addField("Name: ", guild.getName(), false);
-        eb.addField("Owner: ", guild.getOwner().getEffectiveName(), false);
+        eb.addField("Owner: ", guild.getOwner().getAsMention(), false);
         eb.addField("Icon-URL: ", "[`cdn.discordapp.com`](" + guild.getIconUrl() + ")", false);
         eb.addField("Users: ", guild.getMembers().size() + "", false);
         eb.addField("Region: ", guild.getRegion().toString(), false);
