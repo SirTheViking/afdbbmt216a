@@ -96,6 +96,8 @@ public class HelpCommand extends Command {
                         "\n\n_**NEW**_ >help --param   :   will bring up the help menu for command parameters" +
                         "\n\n>g  <link>   :   google for anything and get the first result" +
                         "\n\n>gets  <twitch channel name>   :   will return a link the the stream and wether or not the stream is live" +
+                        "\n\n_**NEW**_>serverinfo   :   will return relevant info about the server" +
+                        "\n\n_**NEW**_>userinfo <username>   :   will return info about the user with the provided username" +
                         "\n\n\nadding a dash '-' to a message will make the bot respond to it", false);
         eb.addBlankField(true);
         eb.addField("Music Commands: ",
