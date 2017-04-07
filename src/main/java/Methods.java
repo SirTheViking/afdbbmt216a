@@ -76,6 +76,50 @@ public class Methods {
     }
 
 
+    public static void getDuration(MessageReceivedEvent e, String servername) {
+        MessageChannel channel = e.getChannel();
+        User author = e.getAuthor();
+
+        TrackScheduler trackScheduler = Main.schedulers.get(servername);
+        AudioPlayer player = trackScheduler.getPlayer();
+        long length = player.getPlayingTrack().getDuration();
+        int minutes = Math.toIntExact((length / 1000) / 60);
+        int seconds = Math.toIntExact((length / 1000) - (minutes * 60));
+        String duration = minutes + ":" + seconds;
+
+        if(length != 0) {
+            channel.sendMessage(author.getAsMention() + " Length of the song is: `" + duration + " minutes`.").queue();
+        } else {
+            channel.sendMessage(author.getAsMention() + " There is no song playing.").queue();
+        }
+    }
+
+
+    public static void setPosition(MessageReceivedEvent e, String servername, String position) {
+        MessageChannel channel = e.getChannel();
+        User author = e.getAuthor();
+        String[] pos = position.split(":");
+
+        int hours = Integer.parseInt(pos[0]) * 60 * 60;
+        int minutes = Integer.parseInt(pos[1]) * 60;
+        int seconds = Integer.parseInt(pos[2]);
+
+        long finalTime = (hours + minutes + seconds) * 1000;
+
+        TrackScheduler trackScheduler = Main.schedulers.get(servername);
+        AudioPlayer player = trackScheduler.getPlayer();
+        long length = player.getPlayingTrack().getDuration();
+
+        if(finalTime > length) {
+            channel.sendMessage(author.getAsMention() + " I can't do that since the song isn't that long. `Length: " + (length/1000)/60 + " minutes`").queue();
+        } else {
+            player.getPlayingTrack().setPosition(finalTime);
+        }
+
+
+    }
+
+
 
     public static void queueTrack(MessageReceivedEvent e, String song, String servername) {
         MessageChannel channel = e.getChannel();

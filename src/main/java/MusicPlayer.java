@@ -129,6 +129,14 @@ public class MusicPlayer extends Command {
                     */
                     Methods.leaveVoice(guild);
                     break;
+
+                case ">setpos":
+                    Methods.setPosition(e, servername, message[1]);
+                    break;
+
+                case ">duration":
+                    Methods.getDuration(e, servername);
+                    break;
             }
         }
 
