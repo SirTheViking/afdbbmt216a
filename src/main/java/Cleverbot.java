@@ -4,7 +4,11 @@ import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cleverbot extends Command {
 
@@ -23,10 +27,14 @@ public class Cleverbot extends Command {
     private void respondToMessage(MessageReceivedEvent e) {
 
         String msg = e.getMessage().getContent();
+        List<User> mentions = e.getMessage().getMentionedUsers();
+        User bot = e.getJDA().getSelfUser();
 
-        if(e.isFromType(ChannelType.TEXT) && (msg.indexOf("-") == 0) && !e.getAuthor().isBot()) {
+
+        if(e.isFromType(ChannelType.TEXT) && mentions.contains(bot) && !e.getAuthor().isBot() && mentions.size() == 1) {
 
             Thread messageThread = new Thread(() -> {
+                String[] split = msg.split(" ", 2);
                 MessageChannel channel = e.getChannel();
                 try {
                     ChatterBot bot1 = factory.create(ChatterBotType.CLEVERBOT, Main.cleverAPI);
@@ -39,7 +47,7 @@ public class Cleverbot extends Command {
                         the response time is. Written on 19/03/2017
                     */
                     long startTime = System.currentTimeMillis();
-                    botMessage = bot1Session.think(msg);
+                    botMessage = bot1Session.think(split[1]);
                     long endTime = System.currentTimeMillis();
 
                     long finalTime = endTime - startTime;
@@ -50,7 +58,7 @@ public class Cleverbot extends Command {
             });
             messageThread.start();
         }
-        else if(e.isFromType(ChannelType.PRIVATE) && !e.getAuthor().isBot()) {
+        else if(e.isFromType(ChannelType.PRIVATE) && mentions.contains(bot) && !e.getAuthor().isBot() && mentions.size() == 1) {
             Thread messageThread = new Thread(() -> {
                 MessageChannel channel = e.getChannel();
                 try {

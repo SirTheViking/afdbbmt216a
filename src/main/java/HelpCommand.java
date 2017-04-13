@@ -98,9 +98,9 @@ public class HelpCommand extends Command {
                         "\n\n>gets  <twitch channel name>   :   will return a link the the stream and wether or not the stream is live" +
                         "\n\n_**NEW**_>serverinfo   :   will return relevant info about the server" +
                         "\n\n_**NEW**_>userinfo <username>   :   will return info about the user with the provided username" +
-                        "\n\n_**NEW**_>setpos h:m:s   :   sets the position of the song to the specified time, must be in that exact time format" +
-                        "\n\n_**NEW**_>duration   :   gets the duration of the song that's playing" +
-                        "\n\n\nadding a dash '-' to a message will make the bot respond to it", false);
+                        "\n\n_**NEW**_>setpos h/m/s   :   sets the position of the song to the specified time, must be in that exact time format" +
+                        "\n\n_**NEW**_>getpos   :   gets the position of the song that's playing" +
+                        "\n\n_**NEW**_>duration   :   gets the duration of the song that's playing", false);
         eb.addBlankField(true);
         eb.addField("Music Commands: ",
                 "\n\n>join <channel name>   :   to make the bot join a voice channel" +

@@ -134,6 +134,10 @@ public class MusicPlayer extends Command {
                     Methods.setPosition(e, servername, message[1]);
                     break;
 
+                case ">getpos":
+                    Methods.getPosition(e, servername);
+                    break;
+
                 case ">duration":
                     Methods.getDuration(e, servername);
                     break;

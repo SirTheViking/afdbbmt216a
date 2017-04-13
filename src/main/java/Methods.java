@@ -95,6 +95,51 @@ public class Methods {
     }
 
 
+    public static void getPosition(MessageReceivedEvent e, String servername) {
+        MessageChannel channel = e.getChannel();
+        User author = e.getAuthor();
+
+        TrackScheduler trackScheduler = Main.schedulers.get(servername);
+        AudioPlayer player = trackScheduler.getPlayer();
+        long position = player.getPlayingTrack().getPosition();
+
+        int minutes = Math.toIntExact((position / 1000) / 60);
+        int seconds = Math.toIntExact((position / 1000) - (minutes * 60));
+
+        long length = player.getPlayingTrack().getDuration();
+        int dminutes = Math.toIntExact((length / 1000) / 60);
+        int dseconds = Math.toIntExact((length / 1000) - (dminutes * 60));
+
+        String duration;
+        String fPosition;
+
+        if(seconds < 10) {
+            fPosition = minutes + ":0" + seconds;
+        } else if (minutes < 10){
+            fPosition = "0" + minutes + ":" + seconds;
+        } else if (minutes < 10 && seconds < 10) {
+            fPosition = "0" + minutes + ":0" + seconds;
+        } else {
+            fPosition = minutes + ":" + seconds;
+        }
+
+        if(dseconds < 10) {
+            duration = dminutes + ":0" + dseconds;
+        } else if (dminutes < 10){
+            duration = "0" + dminutes + ":" + dseconds;
+        } else if (dminutes < 10 && dseconds < 10) {
+            duration = "0" + dminutes + ":0" + dseconds;
+        } else {
+            duration = dminutes + ":" + dseconds;
+        }
+
+
+
+        channel.sendMessage(author.getAsMention() + " `" + fPosition + "/" + duration + "`").queue();
+    }
+
+
+
     public static void setPosition(MessageReceivedEvent e, String servername, String position) {
         MessageChannel channel = e.getChannel();
         User author = e.getAuthor();
@@ -115,8 +160,6 @@ public class Methods {
         } else {
             player.getPlayingTrack().setPosition(finalTime);
         }
-
-
     }
 
 
